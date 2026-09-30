@@ -21,6 +21,14 @@ Install the latest published binary.
 curl -fsSL https://raw.githubusercontent.com/RivoLink/leaf/main/scripts/install.sh | sh
 ```
 
+**Linux with an older glibc (e.g. CentOS 7, glibc 2.17)**
+
+Install the fully static musl build, which has no glibc dependency:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/RivoLink/leaf/main/scripts/install.sh | LEAF_MUSL=1 sh
+```
+
 **Windows**
 
 ```powershell

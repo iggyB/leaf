@@ -71,7 +71,12 @@ pub(crate) fn run_update() -> Result<()> {
 }
 
 fn current_asset_name() -> Result<&'static str> {
-    asset_name_for_target(std::env::consts::OS, std::env::consts::ARCH).ok_or_else(|| {
+    let asset_name = if cfg!(target_env = "musl") {
+        musl_asset_name_for_target(std::env::consts::OS, std::env::consts::ARCH)
+    } else {
+        asset_name_for_target(std::env::consts::OS, std::env::consts::ARCH)
+    };
+    asset_name.ok_or_else(|| {
         anyhow::anyhow!(
             "Unsupported platform: {} {}",
             std::env::consts::OS,
@@ -88,6 +93,14 @@ pub(crate) fn asset_name_for_target(os: &str, arch: &str) -> Option<&'static str
         ("linux", "aarch64") => Some("leaf-linux-arm64"),
         ("android", "aarch64") => Some("leaf-android-arm64"),
         ("windows", "x86_64") => Some("leaf-windows-x86_64.exe"),
+        _ => None,
+    }
+}
+
+pub(crate) fn musl_asset_name_for_target(os: &str, arch: &str) -> Option<&'static str> {
+    match (os, arch) {
+        ("linux", "x86_64") => Some("leaf-linux-x86_64-musl"),
+        ("linux", "aarch64") => Some("leaf-linux-arm64-musl"),
         _ => None,
     }
 }

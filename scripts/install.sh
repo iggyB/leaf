@@ -4,6 +4,8 @@ set -eu
 REPO="RivoLink/leaf"
 DEST_DIR="${1:-$HOME/.local/bin}"
 DEST_BIN="$DEST_DIR/leaf"
+# Set LEAF_MUSL=1 to install the static musl build (for older glibc, e.g. 2.17)
+LEAF_MUSL="${LEAF_MUSL:-0}"
 
 need_cmd() {
     if ! command -v "$1" >/dev/null 2>&1; then
@@ -78,12 +80,16 @@ detect_asset() {
             esac
             ;;
         Linux)
+            linux_suffix=""
+            if [ "$LEAF_MUSL" = "1" ]; then
+                linux_suffix="-musl"
+            fi
             case "$arch_name" in
                 x86_64 | amd64)
-                    echo "leaf-linux-x86_64"
+                    echo "leaf-linux-x86_64$linux_suffix"
                     ;;
                 aarch64 | arm64)
-                    echo "leaf-linux-arm64"
+                    echo "leaf-linux-arm64$linux_suffix"
                     ;;
                 *)
                     echo "Unsupported Linux architecture: $arch_name" >&2

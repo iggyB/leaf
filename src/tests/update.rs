@@ -31,6 +31,19 @@ fn asset_name_matches_supported_release_targets() {
 }
 
 #[test]
+fn musl_asset_name_matches_supported_release_targets() {
+    assert_eq!(
+        musl_asset_name_for_target("linux", "x86_64"),
+        Some("leaf-linux-x86_64-musl")
+    );
+    assert_eq!(
+        musl_asset_name_for_target("linux", "aarch64"),
+        Some("leaf-linux-arm64-musl")
+    );
+    assert_eq!(musl_asset_name_for_target("macos", "x86_64"), None);
+}
+
+#[test]
 fn newer_version_comparison_accepts_optional_v_prefix() {
     assert!(is_newer_version("1.4.2", "v1.4.3").unwrap());
     assert!(!is_newer_version("1.4.2", "1.4.2").unwrap());
